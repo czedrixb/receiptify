@@ -12,6 +12,8 @@ export default {
     extend: {
       colors: {
         spotifyDark: '#0d0f14',
+        spotifyGreen: '#1ed760',
+        spotifyDarkGreen: '#1DB954',
       },
       fontFamily: {
         circular: ['Circular', 'sans-serif'],
