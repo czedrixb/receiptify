@@ -8,8 +8,10 @@
     </div>
 
     <div class="font-normal">
-      <div>ORDER #001 FOR LILY</div>
-      <div class="mb-1">TUESDAY, MAY 9, 2023</div>
+      <div v-if="user" class="uppercase">
+        ORDER #001 FOR {{ user.display_name }}
+      </div>
+      <div class="mb-1 uppercase">{{ formatDate() }}</div>
       <table class="table-fixed w-full">
         <thead>
           <tr class="border-y border-black border-dashed">
@@ -19,27 +21,31 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>01</td>
-            <td class="uppercase">only girl (in the world) - rihanna</td>
-            <td class="text-right">3:55</td>
+          <tr v-for="(track, index) in tracks" :key="track">
+            <td>{{ (index + 1).toString().padStart(2, "0") }}</td>
+            <td class="uppercase">
+              {{ track.name }} - {{ track.artists[0].name }}
+            </td>
+            <td class="text-right">{{ formatDuration(track.duration_ms) }}</td>
           </tr>
         </tbody>
       </table>
       <div class="border-y border-black border-dashed py-0">
         <div class="flex justify-between items-center">
           <div>ITEM COUNT:</div>
-          <div>10</div>
+          <div>{{ trackCount }}</div>
         </div>
         <div class="flex justify-between items-center">
           <div>TOTAL:</div>
-          <div>37:09</div>
+          <div>{{ totalDuration }}</div>
         </div>
       </div>
       <div class="mb-4">
         <div>CARD #: <span class="font-medium">**** *** ***</span> 2023</div>
         <div>AUTH CODE: 1234</div>
-        <div>CARD HOLDER: LILY</div>
+        <div v-if="user" class="uppercase">
+          CARD HOLDER: {{ user.display_name }}
+        </div>
       </div>
       <div class="text-center mb-5">
         <div>THANK YOU FOR VISING!</div>
@@ -65,16 +71,88 @@
 </template>
 
 <script>
+import { ref, onMounted, computed } from "vue";
+import axios from "axios";
+import { useRouter, useRoute } from "vue-router";
+
 export default {
-  methods: {
-    getUser() {
-      // this.$api
-      //   .get("/me" {
-      //     headers: {
-      //       Authorization: "Bearer " + localStorage.getItem(""),
-      //     },
-      //   });
-    },
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    const user = ref(null);
+    const accessToken = ref(null);
+    const tracks = ref([]);
+    const trackCount = ref(0);
+
+    const getToken = async () => {
+      const { access_token } = route.query;
+      if (!access_token) {
+        console.error("Access token not found!");
+        router.push("/login");
+      } else {
+        accessToken.value = access_token;
+
+        try {
+          const userResponse = await axios.get(
+            "https://api.spotify.com/v1/me",
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken.value}`,
+              },
+            }
+          );
+          user.value = userResponse.data;
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    const getTopTracks = async () => {
+      if (accessToken.value) {
+        try {
+          const tracksResponse = await axios.get(
+            "https://api.spotify.com/v1/me/top/tracks",
+            {
+              params: { limit: 5 },
+              headers: {
+                Authorization: `Bearer ${accessToken.value}`,
+              },
+            }
+          );
+          tracks.value = tracksResponse.data.items;
+          trackCount.value = tracks.value.length;
+        } catch (error) {
+          console.error("Error fetching top tracks:", error);
+        }
+      }
+    };
+
+    const formatDuration = (milliseconds) => {
+      const totalSeconds = Math.floor(milliseconds / 1000);
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    };
+
+    const totalDuration = computed(() => {
+      if (!tracks.value || tracks.value.length === 0) {
+        return "0:00";
+      }
+      const totalMilliseconds = tracks.value.reduce(
+        (sum, track) => sum + track.duration_ms,
+        0
+      );
+      return formatDuration(totalMilliseconds);
+    });
+
+    onMounted(() => {
+      getToken().then(() => {
+        getTopTracks();
+      });
+    });
+
+    return { user, tracks, formatDuration, trackCount, totalDuration };
   },
 };
 </script>
