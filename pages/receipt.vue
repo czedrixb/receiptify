@@ -51,7 +51,7 @@
           </div>
         </div>
         <div class="text-center mb-5">
-          <div>THANK YOU FOR VISING!</div>
+          <div>THANK YOU FOR VISITING!</div>
           <div class="flex justify-center">
             <img src="/images/qr-img.png" class="w-24" alt="" />
           </div>
