@@ -31,7 +31,7 @@
 export default {
   methods: {
     login() {
-      window.location.href = "https://back-receiptify.onrender.com//api/login";
+      window.location.href = "https://back-receiptify.onrender.com/api/login";
     },
   },
 };
