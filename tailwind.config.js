@@ -15,9 +15,6 @@ export default {
         spotifyGreen: '#1ed760',
         spotifyDarkGreen: '#1DB954',
       },
-      fontFamily: {
-        circular: ['Circular', 'sans-serif'],
-      },
     },
   },
   plugins: [],
