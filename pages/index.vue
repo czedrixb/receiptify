@@ -3,7 +3,7 @@
     class="container h-lvh flex items-center mx-auto py-24 md:py-28 xl:py-40"
   >
     <div
-      class="bg-white px-5 pt-10 pb-12 rounded-2xl w-full max-w-sm mx-auto md:max-w-md"
+      class="bg-white px-5 pt-10 pb-12 rounded-2xl w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto"
     >
       <div class="text-center">
         <h1 class="text-3xl font-semibold mb-5">Login</h1>
