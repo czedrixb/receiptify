@@ -1,5 +1,10 @@
 <template>
-  <div class="container h-full mx-auto py-24 md:py-28 xl:py-40">
+  <div
+    :class="[
+      'container  mx-auto py-24 md:py-28 xl:py-40',
+      tracks != null ? 'h-full' : 'h-lvh',
+    ]"
+  >
     <div
       class="bg-white px-5 pb-12 pt-10 rounded-2xl w-full h-full max-w-xs sm:max-w-sm mx-auto md:max-w-md md:px-8"
     >
