@@ -79,89 +79,84 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { useRouter, useRoute } from "vue-router";
 
-export default {
-  setup() {
-    const router = useRouter();
-    const route = useRoute();
-    const user = ref(null);
-    const accessToken = ref(null);
-    const tracks = ref([]);
-    const trackCount = ref(0);
+// reactive state
+const router = useRouter();
+const route = useRoute();
+const user = ref(null);
+const accessToken = ref(null);
+const tracks = ref([]);
+const trackCount = ref(0);
 
-    const getToken = async () => {
-      const { access_token } = route.query;
-      if (!access_token) {
-        console.error("Access token not found!");
-        router.push("/login");
-      } else {
-        accessToken.value = access_token;
+//fetch
+const getToken = async () => {
+  const { access_token } = route.query;
+  if (!access_token) {
+    console.error("Access token not found!");
+    router.push("/login");
+  } else {
+    accessToken.value = access_token;
 
-        try {
-          const userResponse = await axios.get(
-            "https://api.spotify.com/v1/me",
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken.value}`,
-              },
-            }
-          );
-          user.value = userResponse.data;
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      }
-    };
-
-    const getTopTracks = async () => {
-      if (accessToken.value) {
-        try {
-          const tracksResponse = await axios.get(
-            "https://api.spotify.com/v1/me/top/tracks",
-            {
-              params: { limit: 5 },
-              headers: {
-                Authorization: `Bearer ${accessToken.value}`,
-              },
-            }
-          );
-          tracks.value = tracksResponse.data.items;
-          trackCount.value = tracks.value.length;
-        } catch (error) {
-          console.error("Error fetching top tracks:", error);
-        }
-      }
-    };
-
-    const formatDuration = (milliseconds) => {
-      const totalSeconds = Math.floor(milliseconds / 1000);
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
-      return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-    };
-
-    const totalDuration = computed(() => {
-      if (!tracks.value || tracks.value.length === 0) {
-        return "0:00";
-      }
-      const totalMilliseconds = tracks.value.reduce(
-        (sum, track) => sum + track.duration_ms,
-        0
-      );
-      return formatDuration(totalMilliseconds);
-    });
-
-    onMounted(() => {
-      getToken().then(() => {
-        getTopTracks();
+    try {
+      const userResponse = await axios.get("https://api.spotify.com/v1/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken.value}`,
+        },
       });
-    });
-
-    return { user, tracks, formatDuration, trackCount, totalDuration };
-  },
+      user.value = userResponse.data;
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }
 };
+
+const getTopTracks = async () => {
+  if (accessToken.value) {
+    try {
+      const tracksResponse = await axios.get(
+        "https://api.spotify.com/v1/me/top/tracks",
+        {
+          params: { limit: 5 },
+          headers: {
+            Authorization: `Bearer ${accessToken.value}`,
+          },
+        }
+      );
+      tracks.value = tracksResponse.data.items;
+      trackCount.value = tracks.value.length;
+    } catch (error) {
+      console.error("Error fetching top tracks:", error);
+    }
+  }
+};
+
+// methods
+const formatDuration = (milliseconds) => {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
+
+const totalDuration = computed(() => {
+  if (!tracks.value || tracks.value.length === 0) {
+    return "0:00";
+  }
+  const totalMilliseconds = tracks.value.reduce(
+    (sum, track) => sum + track.duration_ms,
+    0
+  );
+  return formatDuration(totalMilliseconds);
+});
+
+// lifecycle hooks
+onMounted(() => {
+  getToken().then(() => {
+    getTopTracks();
+  });
+});
 </script>

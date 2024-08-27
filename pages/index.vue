@@ -27,13 +27,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  methods: {
-    login() {
-      window.location.href = "https://back-receiptify.onrender.com/api/login";
-      // window.location.href = "http://localhost:8000/api/login";
-    },
-  },
+<script setup>
+useSeoMeta({
+  title: "Receiptify - Login",
+  ogTitle: "Receiptify - Login",
+});
+
+// methods
+const login = () => {
+  window.location.href = "https://back-receiptify.onrender.com/api/login";
+  // window.location.href = "http://localhost:8000/api/login";
 };
 </script>
