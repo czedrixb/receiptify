@@ -1,78 +1,10 @@
-# Nuxt 3 Minimal Starter
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+# Receiptify
 
-## Setup
+This project is a simplified clone of Receiptify that only displays the top 5 tracks for the current month. It is limited to specific users I’ve added to the user management of my Spotify dashboard, as the app is in development mode 😔. Built to experiment with Nuxt.js and Node.js, the OAuth authentication is handled by the Node.js backend, while the Nuxt.js frontend handles data fetching and presentation.
 
-Make sure to install the dependencies:
 
-```bash
-# npm
-npm install
+## Authors
 
-# pnpm
-pnpm install
+- [@czedrixb](https://www.github.com/czedrixb)
 
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
-# nuxt-template
-# receiptify
-# receiptify
