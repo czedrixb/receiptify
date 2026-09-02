@@ -4,14 +4,12 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --host 127.0.0.1",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxtjs/date-fns": "^1.5.0",
-    "axios": "^1.7.4",
     "nuxt": "^3.12.4",
     "vue": "latest"
   },

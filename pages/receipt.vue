@@ -80,59 +80,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import axios from "axios";
-import { useRouter, useRoute } from "vue-router";
+import { computed } from "vue";
+
+// fetch — the server route holds the token and talks to Spotify for us
+const { data, error } = await useFetch("/api/receipt", {
+  $fetch: useRequestFetch(),
+});
+
+if (error.value) {
+  await navigateTo("/");
+}
 
 // reactive state
-const router = useRouter();
-const route = useRoute();
-const user = ref(null);
-const accessToken = ref(null);
-const tracks = ref([]);
-const trackCount = ref(0);
-
-//fetch
-const getToken = async () => {
-  const { access_token } = route.query;
-  if (!access_token) {
-    console.error("Access token not found!");
-    router.push("/login");
-  } else {
-    accessToken.value = access_token;
-
-    try {
-      const userResponse = await axios.get("https://api.spotify.com/v1/me", {
-        headers: {
-          Authorization: `Bearer ${accessToken.value}`,
-        },
-      });
-      user.value = userResponse.data;
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  }
-};
-
-const getTopTracks = async () => {
-  if (accessToken.value) {
-    try {
-      const tracksResponse = await axios.get(
-        "https://api.spotify.com/v1/me/top/tracks",
-        {
-          params: { limit: 5 },
-          headers: {
-            Authorization: `Bearer ${accessToken.value}`,
-          },
-        }
-      );
-      tracks.value = tracksResponse.data.items;
-      trackCount.value = tracks.value.length;
-    } catch (error) {
-      console.error("Error fetching top tracks:", error);
-    }
-  }
-};
+const user = computed(() => data.value?.user ?? null);
+const tracks = computed(() => data.value?.tracks ?? []);
+const trackCount = computed(() => tracks.value.length);
 
 // methods
 const formatDuration = (milliseconds) => {
@@ -143,7 +105,7 @@ const formatDuration = (milliseconds) => {
 };
 
 const totalDuration = computed(() => {
-  if (!tracks.value || tracks.value.length === 0) {
+  if (tracks.value.length === 0) {
     return "0:00";
   }
   const totalMilliseconds = tracks.value.reduce(
@@ -151,12 +113,5 @@ const totalDuration = computed(() => {
     0
   );
   return formatDuration(totalMilliseconds);
-});
-
-// lifecycle hooks
-onMounted(() => {
-  getToken().then(() => {
-    getTopTracks();
-  });
 });
 </script>
